@@ -15,21 +15,22 @@ defmodule Mix.Tasks.Compile.ProtocCompile do
     protoc_options = Keyword.get(config, :protoc_options, [])
 
     protoc = find_protoc(config, protoc_options)
+    output_path = Keyword.get(protoc_options, :output_path, "gen/proto")
     proto_files = find_proto_files(config, protoc_options, args)
     proto_paths = Keyword.get(protoc_options, :paths, [])
 
-    build_protos(protoc, proto_files, proto_paths, verbose?)
+    build_protos(protoc, output_path, proto_files, proto_paths, verbose?)
   end
 
-  defp build_protos(_, [], _, _) do
+  defp build_protos(_, _, [], _, _) do
     @return
   end
 
-  defp build_protos(protoc, proto_files, proto_paths, verbose?) do
-    File.mkdir_p!("lib")
+  defp build_protos(protoc, output_path, proto_files, proto_paths, verbose?) do
+    File.mkdir_p!(output_path)
 
     path_args = for p <- proto_paths, do: "-I#{p}"
-    args = ["--elixir_out=plugins=grpc:./lib"] ++ proto_files ++ path_args
+    args = ["--elixir_out=plugins=grpc:#{output_path}"] ++ proto_files ++ path_args
 
     if verbose? do
       Mix.shell().info("Invoking #{protoc} with args #{inspect(args)}")

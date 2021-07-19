@@ -26,6 +26,20 @@ def project do
 end
 ```
 
+Unless you modify the `output_path` to `lib`, you will also need to add a path 
+to modify `:elixirc_paths` in your `project/0` method to include the output 
+path (`gen/proto` by default).
+
+```elixir
+def project do
+  [
+    ...
+    elixirc_paths: ["gen/proto", "lib", ...],
+    ...
+  ]
+end
+```
+
 ## Options
 
 Options for the `protoc_compile` task should be added to the `project/0` method
@@ -51,3 +65,9 @@ Provides a list of one or more `.proto` files to be compiled.
 
 Provides a list of one or more paths to add via `--proto_path` arguments.
 
+### output_path ""
+
+Sets the output path for generated `.pb.ex` files (the directory will be created
+if it does not exist).
+
+*Default*: `gen/proto`
